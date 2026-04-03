@@ -1,118 +1,117 @@
-🚀 AI Body Motion Detection System
-<p align="center"> <img src="https://img.shields.io/badge/AI-Enabled-blue?style=for-the-badge"> <img src="https://img.shields.io/badge/Computer%20Vision-OpenCV-green?style=for-the-badge"> <img src="https://img.shields.io/badge/ML-Training-orange?style=for-the-badge"> <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge"> </p>
-🎯 Project Overview
+🧠 VitalFocus AI — Smart Study & Home Automation System
 
-This project is an AI-powered multi-modal system that detects human body motion, records voice commands, and continuously trains machine learning models locally.
+An AI-powered real-time system that monitors student focus using computer vision and controls smart home appliances — all through a single camera feed.
 
-It combines:
 
-👁️ Computer Vision (Motion Detection)
-🎤 Voice Processing (Audio Learning)
-🧠 Machine Learning (Self-training system)
-🗂️ Local Dataset Generation
-🔥 Features
+📌 Project Bio
+VitalFocus AI is an intelligent desktop application built with Python that combines pose estimation, object detection, hand gesture control, and IoT communication into one unified pipeline.
+It watches you study through your webcam — detecting whether you're focused, distracted, or taking a break — and simultaneously lets you control smart home devices (light, fan, AC) using just your hand gestures hovering over virtual buttons on screen.
+When distraction is detected continuously for 10 seconds, the system automatically triggers a buzzer alert via an ESP32 microcontroller over serial communication. The home appliance states (light, fan, fan speed, AC, AC temperature) are also synced to the ESP32 in real time.
+This project is ideal as a student productivity tool, smart home demo, or an IoT + AI portfolio project.
 
-✨ Body Motion Detection
+✨ Features
+FeatureDescription🎯 Focus DetectionDetects FOCUSED / DISTRACTED / BREAK states using pose landmarks📦 Object DetectionYOLOv8 detects books, phones, multiple persons✋ Hand Gesture ControlIndex finger hover activates virtual smart home buttons🏠 Smart Home PanelToggle Light, Fan, AC — All ON / ALL OFF⏱️ Distraction Timer10-second continuous distraction triggers buzzer📡 ESP32 Serial SyncSends study status + home state to ESP32 over COM7🔔 Buzzer AlertAuto-alert after sustained distraction
 
-Real-time human movement tracking using camera
-Detects changes in posture and motion patterns
+🛠️ Tech Stack
 
-🎤 Voice Training Module
+Python 3.10+
+OpenCV — Camera capture & UI rendering
+MediaPipe — Pose estimation + hand landmark detection
+Ultralytics YOLOv8 — Real-time object detection
+PySerial — ESP32 serial communication
+NumPy — Angle calculations & smoothing
+ESP32 — Microcontroller for home control & buzzer
 
-Records voice inputs
-Converts them into datasets for ML training
 
-🧾 Command Recognition
-
-Basic command detection system
-Expandable for NLP-based commands
-
-🧬 Self-Learning Dataset System
-
-Automatically stores outputs locally
-Builds dataset over time
-
-🔐 Custom Language Detection
-
-Detects patterns like:
-Morse Code
-Cipher Languages
-Custom-built languages
-🧠 System Architecture
-Camera Input → Motion Detection → Data Processing → Local Storage
-                      ↓
-                ML Training Engine
-                      ↓
-        Voice Input → Feature Extraction → Dataset Storage
-                      ↓
-              Command Recognition Layer
-⚙️ Tech Stack
-Technology	Usage
-🐍 Python	Core development
-📷 OpenCV	Motion detection
-🎙️ SpeechRecognition	Voice input
-🤖 Scikit-learn / TensorFlow	ML training
-💾 Local Storage	Dataset generation
-🔗 Flask / FastAPI	API layer (optional)
 📁 Project Structure
-body-motion-ai/
-│── data/
-│   ├── motion/
-│   ├── voice/
-│   └── commands/
+VitalFocus-AI/
 │
-│── models/
-│── services/
-│   ├── vision/
-│   ├── audio/
-│   ├── commands/
-│
-│── app.py
-│── requirements.txt
-│── README.md
-🚀 Getting Started
-1️⃣ Clone the Repository
-git clone https://github.com/your-username/body-motion-ai.git
-cd body-motion-ai
-2️⃣ Install Dependencies
-pip install -r requirements.txt
-3️⃣ Run the Project
-python app.py
-📸 Use Cases
-🏥 Health Monitoring (movement tracking)
-🚗 Driver Safety Systems
-🏠 Smart Home Automation
-🛡️ Surveillance Systems
-🎮 Gesture-based Control Systems
-🔮 Future Enhancements
-🔥 Deep Learning Pose Estimation (MediaPipe / YOLO)
-🌐 Cloud Sync for datasets
-📱 Mobile App Integration
-🧠 Advanced NLP Command System
-🛰️ Real-time monitoring dashboard
-🤝 Contributing
+├── main.py                  # Main application entry point
+├── camera/
+│   └── camera_capture.py    # Camera initialization
+├── pose/
+│   └── pose_detector.py     # MediaPipe pose detection wrapper
+├── yolov8n.pt               # YOLOv8 nano model weights
+└── README.md
 
-Contributions are welcome!
+⚙️ Installation
+1. Clone the repository
+bashgit clone https://github.com/yourname/vitalfocus-ai.git
+cd vitalfocus-ai
+2. Install dependencies
+bashpip install opencv-python mediapipe ultralytics pyserial numpy
+3. Download YOLOv8 model
+bash# Automatically downloaded on first run, or manually:
+pip install ultralytics
+python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+4. Connect ESP32
 
-Fork → Clone → Create Branch → Commit → Push → PR 🚀
-📜 License
+Connect ESP32 via USB
+Update port in main.py if needed (default: COM7)
+Baud rate: 115200
 
-This project is licensed under the MIT License
 
-💡 Author
+🚀 Running the App
+bashpython main.py
 
-👤 Utsab Sinha
-💻 AI | ML | IoT Innovator
-🔗 GitHub: https://github.com/Utsabsinha19
+Press ESC to exit
+Place your index finger tip over a button and hold for 1 second to activate it
+Sit in front of the camera for focus detection to work
 
-⭐ Support
 
-If you like this project:
+📡 ESP32 Serial Protocol
+The system sends two types of serial messages every frame:
+STUDY,FOCUSED,120,30,10,0        # status, focus_time, distraction_time, break_time, buzzer
+HOME,1,1,2,0,24                  # light, fan, fan_speed, ac, ac_temp
 
-🌟 Star the repo
-🍴 Fork it
-📢 Share it
+🎯 Focus Detection Logic
+ConditionStatusHead angle 80–100° + stable armsFOCUSEDBook detected by YOLOFOCUSEDPhone detected / multiple personsDISTRACTEDHead angle < 70°BREAKDistracted > 10 secondsBUZZER ON
 
-⚡ Tagline
+🏠 Smart Home Buttons
+ButtonActionLIGHTToggle light ON/OFFFANToggle fan ON/OFFACToggle AC ON/OFFALL ONTurn all appliances ONALL OFFTurn all appliances OFF
 
-"Building intelligent systems that learn from motion, voice, and behavior."
+⚠️ Alert System
+
+Distraction timer starts counting when DISTRACTED state is detected
+If distraction is continuous for 10 seconds → buzzer_should_play = True
+Buzzer state is sent to ESP32 via serial
+Timer resets as soon as focus is regained
+
+
+🔧 Configuration
+You can tweak these constants in main.py:
+pythonHOVER_SECS        = 1.0   # Seconds to hover to activate button
+DISTRACTION_DELAY = 10.0  # Seconds before buzzer triggers
+HEAD_MIN          = 80    # Min head angle for focus
+HEAD_MAX          = 100   # Max head angle for focus
+MOVEMENT_THRESHOLD = 15   # Max arm movement for "stable"
+BUFFER_SIZE       = 15    # Smoothing buffer size
+FOCUS_SCORE       = 10    # Min focus frames in buffer
+
+📸 How It Works
+Camera Feed
+    │
+    ├── YOLOv8 Object Detection  →  Book / Phone / Person
+    │
+    ├── MediaPipe Pose           →  Head angle + Arm angles
+    │       │
+    │       └── Focus Status:  FOCUSED / DISTRACTED / BREAK
+    │
+    ├── MediaPipe Hands          →  Index finger cursor
+    │       │
+    │       └── Virtual Button Hover  →  Smart Home Control
+    │
+    └── Serial Output  →  ESP32  →  Relay / Buzzer / Display
+
+📋 Requirements
+opencv-python
+mediapipe
+ultralytics
+pyserial
+numpy
+
+🙌 Credits
+Built using open-source AI tools — MediaPipe, YOLOv8, OpenCV.
+
+📄 License
+MIT License — free to use, modify, and distribute.
